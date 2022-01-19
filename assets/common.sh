@@ -54,7 +54,7 @@ setup_kubectl() {
 
   # Optional. Assume AWS IAM Role
   local aws_iam_role
-  aws_iam_role="$(jq -r '.source.aws_eks_assume_role // ""' < "$payload")"
+  aws_iam_role="$(jq -r '.source.aws_iam_role // ""' < "$payload")"
   if [[ -n "$aws_iam_role" ]]; then
     aws sts assume-role --role-arn $aws_iam_role --role-session-name Concourse > file.json
     export AWS_ACCESS_KEY_ID=$(cat file.json | grep -oP '(?<="AccessKeyId": ")[^"]*')
