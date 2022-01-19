@@ -62,20 +62,19 @@ Control the Kubernetes cluster with `kubectl`, `aws` or `helm`.
 
 ```yaml
 resource_types:
-- name: kubernetes
+- name: eks-resource
   type: docker-image
   source:
-    repository: zlabjp/kubernetes-resource
-    tag: "1.17"
+    repository: zoranjurc/eks-resource
+    tag: latest
 
 resources:
-- name: kubernetes-production
-  type: kubernetes
-  source:
-    server: https://192.168.99.100:8443
-    namespace: production
-    token: {{kubernetes-production-token}}
-    certificate_authority: {{kubernetes-production-cert}}
+- name: eks
+  type: eks-resource
+  source: 
+    aws_eks_cluster_name: ((aws.cluster-name))
+    aws_iam_role: ((aws.iam-role))
+    aws_eks_region: eu-central-1
 - name: my-app
   type: git
   source:
@@ -86,58 +85,49 @@ jobs:
   plan:
   - get: my-app
     trigger: true
-  - put: kubernetes-production
+  - put: eks
     params:
       kubectl: apply -f my-app/k8s -f my-app/k8s/production
       wait_until_ready_selector: app=myapp
 ```
 
-### Force update deployment
+### Deploy an instance to EC2
 
 ```yaml
 jobs:
-- name: force-update-deployment
+- name: deploy-ec2
   serial: true
   plan:
-  - put: mycluster
+  - put: eks
     params:
-      kubectl: |
-        patch deploy nginx -p '{"spec":{"template":{"metadata":{"labels":{"updated_at":"'$(date +%s)'"}}}}}'
-      wait_until_ready_selector: run=nginx
+      aws: ec2 run-instances --image-id ((aws.image-id)) --count 1 --region eu-central-1 \ 
+      --instance-type t2.micro --key-name ((aws.key-name)) --security-group-ids ((aws.security-group)) \
+      --subnet-id ((aws.subnet-id)) --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=demotest}]'
 ```
 
-### Use a remote kubeconfig file fetched by s3-resource
+### Use helm to update PostgreSQL
 
 ```yaml
 resources:
-- name: k8s-prod
-  type: kubernetes
-
-- name: kubeconfig-file
-  type: s3
-  source:
-    bucket: mybucket
-    versioned_file: config
-    access_key_id: ((s3-access-key))
-    secret_access_key: ((s3-secret))
-
+- name: eks
+  type: eks-resource
+  source: 
+    aws_eks_cluster_name: ((aws.cluster-name))
+    aws_iam_role: ((aws.iam-role))
+    aws_eks_region: eu-central-1
 - name: my-app
   type: git
   source:
     ...
 
 jobs:
-- name: k8s-deploy-prod
+- name: update-helm-deployment
   plan:
-  - aggregate:
-    - get: my-app
-      trigger: true
-    - get: kubeconfig-file
-  - put: k8s-prod
+  - get: my-app
+    trigger: true
+  - put: eks
     params:
-      kubectl: apply -f my-app/k8s -f my-app/k8s/production
-      wait_until_ready_selector: app=myapp
-      kubeconfig_file: kubeconfig-file/config
+      helm: upgrade -f my-app/postgres.yaml my-release bitnami/postgresql
 ```
 
 ## License
