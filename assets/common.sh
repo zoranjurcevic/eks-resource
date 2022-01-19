@@ -20,7 +20,7 @@ setup_kubectl() {
 
   # Optional. The path of kubeconfig file
   local kubeconfig_file
-  kubeconfig_file="$(jq -r '.params.kubeconfig_file // ""' < "$payload")"
+  kubeconfig_file="$(jq -r '.source.kubeconfig_file // ""' < "$payload")"
   # Optional. The content of kubeconfig
   local kubeconfig
   kubeconfig="$(jq -r '.source.kubeconfig // ""' < "$payload")"
@@ -47,18 +47,14 @@ setup_kubectl() {
 
   # Optional. The namespace scope. Defaults to default if doesn't specify in kubeconfig.
   local namespace
-  namespace="$(jq -r '.params.namespace // ""' < "$payload")"
-  if [[ -z "$namespace" ]]; then
-    # Optional. The namespace scope. Defaults to `default`. If set along with `kubeconfig`, `namespace` will override the namespace in the current-context
-    namespace="$(jq -r '.source.namespace // ""' < "$payload")"
-  fi
+  namespace="$(jq -r '.source.namespace // ""' < "$payload")"
   if [[ -n "$namespace" ]]; then
     kubectl config set-context "$(kubectl config current-context)" --namespace="$namespace" > /dev/null
   fi
 
   # Optional. Assume AWS IAM Role
   local aws_iam_role
-  aws_iam_role="$(jq -r '.params.aws_eks_assume_role // ""' < "$payload")"
+  aws_iam_role="$(jq -r '.source.aws_eks_assume_role // ""' < "$payload")"
   if [[ -n "$aws_iam_role" ]]; then
     aws sts assume-role --role-arn $aws_iam_role --role-session-name Concourse > file.json
     export AWS_ACCESS_KEY_ID=$(cat file.json | grep -oP '(?<="AccessKeyId": ")[^"]*')
@@ -149,4 +145,3 @@ on_exit() {
   [[ $code -ne 0 ]] && echo && echoerr "Failed with error code $code"
   return $code
 }
-# vim: ai ts=2 sw=2 et sts=2 ft=sh
