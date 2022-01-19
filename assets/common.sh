@@ -3,8 +3,8 @@
 # For the full copyright and license information, please view the LICENSE
 # file that was distributed with this source code.
 
-# setup_kubectl prepares kubectl and exports the KUBECONFIG environment variable.
-setup_kubectl() {
+# setup prepares the resource and exports the KUBECONFIG environment variable.
+setup() {
   local payload
   payload=$1
 
@@ -13,7 +13,7 @@ setup_kubectl() {
   # the entry name for cluster of kubeconfig
   local -r CLUSTER_NAME=cluster
   # the entry name for context of kubeconfig
-  local -r CONTEXT_NAME=kubernetes-resource
+  local -r CONTEXT_NAME=eks-resource
 
   KUBECONFIG="$(mktemp "$TMPDIR/kubernetes-resource-kubeconfig.XXXXXX")"
   export KUBECONFIG
@@ -34,7 +34,7 @@ setup_kubectl() {
   elif [[ -n "$kubeconfig" ]]; then
     echo "$kubeconfig" > "$KUBECONFIG"
   else
-    # Update AWS EKS region via aws-cli
+    # Setup kubeconfig via aws-cli
     local aws_eks_cluster_name
     aws_eks_cluster_name="$(jq -r '.source.aws_eks_cluster_name // ""' < "$payload")"
     local aws_eks_region
@@ -63,6 +63,12 @@ setup_kubectl() {
     rm file.json
   fi
 
+  # Optional. Fetch helm repository
+  local helm_repository
+  helm_repository="$(jq -r '.source.helm_repo_add // ""' < "$payload")"
+  if [[ -n "$helm_repository" ]]; then
+    helm repo add $helm_repository
+  fi
 }
 
 # current_namespace outputs the current namespace.

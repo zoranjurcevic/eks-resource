@@ -24,11 +24,14 @@ This resource supports and is compatible with `Kubernetes 1.21`.
 - `context`: *Optional.* The context to use when specifying a `kubeconfig` or `kubeconfig_file`
 - `aws_eks_cluster_name`: *Optional.* the AWS EKS cluster name.
 - `aws_eks_region`: *Optional.* the AWS region (eg. `eu-central-1`).
+  - must be supplied if `aws_eks_cluster_name` is supplied
 - `aws_iam_role`: *Optional.* the AWS IAM role ARN to assume.
-- `aws_access_key_id`: *Optional.* AWS access key to use for iam authenticator.
-- `aws_secret_access_key`: *Optional.* AWS secret key to use for iam authenticator.
-- `aws_session_token`: *Optional.* AWS session token (assumed role) to use for iam authenticator.
+  - The IAM Role automatically generates the following:
+  - `aws_access_key_id`: *Optional.* AWS access key to use.
+  - `aws_secret_access_key`: *Optional.* AWS secret key to use.
+  - `aws_session_token`: *Optional.* AWS session token (assumed role) to use.
 - `namespace`: *Optional.* The namespace scope. Defaults to `default`. If set along with `kubeconfig`, `namespace` takes priority.
+- `helm_repo_add`: *Optional.* Specify the helm repository to use.
 
 ## Behavior
 
@@ -54,9 +57,8 @@ Control the Kubernetes cluster with `kubectl`, `aws` or `helm`.
 - `wait_until_ready`: *Optional.* The number of seconds that waits until all pods are ready. 0 means don't wait. Defaults to `30`.
 - `wait_until_ready_interval`: *Optional.* The interval (sec) on which to check whether all pods are ready. Defaults to `3`.
 - `wait_until_ready_selector`: *Optional.* [A label selector](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors) to identify a set of pods which to check whether those are ready. Defaults to every pods in the namespace.
-- `kubeconfig_file`: *Optional.* The path of kubeconfig file. This param has priority over the `kubeconfig` of source configuration.
 
-## Example
+## Examples
 
 ```yaml
 resource_types:

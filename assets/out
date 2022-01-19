@@ -32,22 +32,33 @@ export AWS_SECRET_ACCESS_KEY
 AWS_SESSION_TOKEN=$(jq -r '.source.aws_session_token // ""' < "$payload")
 export AWS_SESSION_TOKEN
 
-setup_kubectl "$payload"
+setup "$payload"
 
 # Optional. Specify the operation that you want to perform on one or more
 # resources, for example apply, delete, label.
 kubectl_command="$(jq -r '.params.kubectl // ""' < "$payload")"
-load_kcommand=" " read -r -a kubectl_arguments <<< "$(eval "echo $kubectl_command")"
+if [[ -n "$kubectl_command" ]]; then
+load_kubectl_command=" " read -r -a kubectl_arguments <<< "$(eval "echo $kubectl_command")"
 exe kubectl "${kubectl_arguments[@]}"
+fi
 
 # Optional. Specify the operation that you wish to perform with AWS resources.
 aws_command="$(jq -r '.params.aws // ""' < "$payload")"
-load_acommand=" " read -r -a aws_arguments <<< "$(eval "echo $aws_command")"
+if [[ -n "$aws_command" ]]; then
+load_aws_command=" " read -r -a aws_arguments <<< "$(eval "echo $aws_command")"
 exe aws "${aws_arguments[@]}"
+fi
+
+# Optional. Specify the operation that you wish to perform with Helm.
+helm_command="$(jq -r '.params.helm // ""' < "$payload")"
+if [[ -n "$helm_command" ]]; then
+load_helm_command=" " read -r -a helm_arguments <<< "$(eval "echo $helm_command")"
+exe helm "${helm_arguments[@]}"
+fi
 
 # Check for input operations
-if [[ -z "$kubectl_command" ]] || [[ -z "$aws_command" ]]; then
-  echoerr 'kubectl or aws must be specified in params.'
+if [[ -z "$kubectl_command" ]] || [[ -z "$aws_command" ]] || [[ -z "$helm_command" ]]; then
+  echoerr 'kubectl, helm or aws must be specified in params.'
   exit 1
 fi
 
