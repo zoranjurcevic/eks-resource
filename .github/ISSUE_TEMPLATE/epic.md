@@ -6,8 +6,6 @@ labels: 'Epic'
 assignees: ''
 ---
 
-Deliverable of #< Epic No >
-
 ## Description
 <!--What would you like this Epic to be about? Example: User story: "As a user I would like to..."-->
 
