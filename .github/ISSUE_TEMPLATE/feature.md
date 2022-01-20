@@ -2,7 +2,7 @@
 name: Feature
 about: A small chunk/story of a bigger Epic
 title: '[Feature] '
-labels: ''
+labels: 'Feature'
 assignees: ''
 ---
 
