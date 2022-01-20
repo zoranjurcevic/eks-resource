@@ -1,3 +1,21 @@
+<!-- PROJECT LOGO -->
+<br />
+<p align="center">
+  <a href="https://github.com/zoranjurcevic/eks-resource">
+    <img src="docs/img/concourse.png" alt="Logo" width="100" height="100">
+  </a>
+
+  <h3 align="center">EKS Resource</h3>
+
+  <p align="center">
+    A Concourse CI/CD resource for the Helm deployment inside EKS
+    <br />
+    <a href="">Report Bug</a>
+    ·
+    <a href="">Request Feature</a>
+  </p>
+</p>
+
 # EKS Resource
 
 A Concourse resource for controlling the Kubernetes cluster inside the AWS EKS cluster.
