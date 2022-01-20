@@ -20,7 +20,8 @@
 
 - [Table of Contents](#table-of-contents)
 - [About](#about)
-  - [K8s Version](#k8s-version)
+  - [Docker image](#docker-image)
+  - [K8s version](#k8s-version)
 - [Source Configuration](#source-configuration)
 - [Behavior](#behavior)
   - [check](#check-do-nothing)
@@ -41,6 +42,12 @@
 A Concourse resource for controlling the Kubernetes cluster inside the AWS EKS cluster.
 
 *This resource is designed to be used on AWS EKS alongside Concourse Helm deployment.*
+
+### Docker image
+
+`docker pull zoranjurc/eks-resource`
+
+[Click here to go the Docker Hub](https://hub.docker.com/repository/docker/zoranjurc/eks-resource)
 
 ### K8s Version
 
