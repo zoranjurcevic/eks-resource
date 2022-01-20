@@ -148,6 +148,10 @@ jobs:
       helm: upgrade -f my-app/postgres.yaml my-release bitnami/postgresql
 ```
 
+## Previous authors
+
+This project is based off of the work of Z Lab Corp and its contributors, the list of which you can see in the AUTHORS file. The original Concourse resource, which supports `kubectl` up to Kubernetes version `1.17` can be seen [here](https://github.com/zlabjp/kubernetes-resource).
+
 ## License
 
 This software is released under the MIT License.
