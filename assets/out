@@ -25,12 +25,12 @@ cd "$source_dir"
 payload=$(mktemp "$TMPDIR/kubernetes-resource-request.XXXXXX")
 cat > "$payload" <&0
 
-AWS_ACCESS_KEY_ID=$(jq -r '.source.aws_access_key_id // ""' < "$payload")
-export AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY=$(jq -r '.source.aws_secret_access_key // ""' < "$payload")
-export AWS_SECRET_ACCESS_KEY
-AWS_SESSION_TOKEN=$(jq -r '.source.aws_session_token // ""' < "$payload")
-export AWS_SESSION_TOKEN
+# AWS_ACCESS_KEY_ID=$(jq -r '.source.aws_access_key_id // ""' < "$payload")
+# export AWS_ACCESS_KEY_ID
+# AWS_SECRET_ACCESS_KEY=$(jq -r '.source.aws_secret_access_key // ""' < "$payload")
+# export AWS_SECRET_ACCESS_KEY
+# AWS_SESSION_TOKEN=$(jq -r '.source.aws_session_token // ""' < "$payload")
+# export AWS_SESSION_TOKEN
 
 setup "$payload"
 
@@ -45,6 +45,7 @@ fi
 # Optional. Specify the operation that you wish to perform with AWS resources.
 aws_command="$(jq -r '.params.aws // ""' < "$payload")"
 if [[ -n "$aws_command" ]]; then
+assume_aws_iam_role "$payload"
 load_aws_command=" " read -r -a aws_arguments <<< "$(eval "echo $aws_command")"
 exe aws "${aws_arguments[@]}"
 fi
@@ -52,15 +53,16 @@ fi
 # Optional. Specify the operation that you wish to perform with Helm.
 helm_command="$(jq -r '.params.helm // ""' < "$payload")"
 if [[ -n "$helm_command" ]]; then
+fetch_helm_repo "$payload"
 load_helm_command=" " read -r -a helm_arguments <<< "$(eval "echo $helm_command")"
 exe helm "${helm_arguments[@]}"
 fi
 
-# Check for input operations
-if [[ -z "$kubectl_command" ]] || [[ -z "$aws_command" ]] || [[ -z "$helm_command" ]]; then
-  echoerr 'kubectl, helm or aws must be specified in params.'
-  exit 1
-fi
+# # Check for input operations
+# if [[ -z "$kubectl_command" ]] || [[ -z "$aws_command" ]] || [[ -z "$helm_command" ]]; then
+#   echoerr 'kubectl, helm or aws must be specified in params.'
+#   exit 1
+# fi
 
 # Optional. The number of seconds that waits until all pods are ready. Defaults to `0`.
 wait_until_ready="$(jq -r '.params.wait_until_ready // 0' < "$payload")"

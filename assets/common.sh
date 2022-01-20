@@ -51,6 +51,23 @@ setup() {
   if [[ -n "$namespace" ]]; then
     kubectl config set-context "$(kubectl config current-context)" --namespace="$namespace" > /dev/null
   fi
+}
+
+fetch_helm_repo() {
+  local payload
+  payload=$1
+
+  # Optional. Fetch helm repository
+  local helm_repository
+  helm_repository="$(jq -r '.source.helm_repo_add // ""' < "$payload")"
+  if [[ -n "$helm_repository" ]]; then
+    helm repo add $helm_repository >/dev/null
+  fi
+}
+
+assume_aws_iam_role() {
+  local payload
+  payload=$1
 
   # Optional. Assume AWS IAM Role
   local aws_iam_role
@@ -61,13 +78,6 @@ setup() {
     export AWS_SECRET_ACCESS_KEY=$(cat file.json | grep -oP '(?<="SecretAccessKey": ")[^"]*')
     export AWS_SESSION_TOKEN=$(cat file.json | grep -oP '(?<="SessionToken": ")[^"]*')
     rm file.json
-  fi
-
-  # Optional. Fetch helm repository
-  local helm_repository
-  helm_repository="$(jq -r '.source.helm_repo_add // ""' < "$payload")"
-  if [[ -n "$helm_repository" ]]; then
-    helm repo add $helm_repository
   fi
 }
 
