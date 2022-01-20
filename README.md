@@ -47,7 +47,7 @@ A Concourse resource for controlling the Kubernetes cluster inside the AWS EKS c
 
 `docker pull zoranjurc/eks-resource`
 
-[Click here to go the Docker Hub](https://hub.docker.com/repository/docker/zoranjurc/eks-resource)
+[Click here to go the Docker Hub](https://hub.docker.com/r/zoranjurc/eks-resource)
 
 ### K8s Version
 
