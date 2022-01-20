@@ -10,9 +10,9 @@
   <p align="center">
     A Concourse CI/CD resource for the Helm deployment inside EKS
     <br />
-    <a href="">Report Bug</a>
+    <a href="https://github.com/zoranjurcevic/eks-resource/issues/new?assignees=&labels=Bug&template=bug.md&title=%5BBUG%5D+">Report Bug</a>
     ·
-    <a href="">Request Feature</a>
+    <a href="https://github.com/zoranjurcevic/eks-resource/issues/new?assignees=&labels=&template=feature.md&title=%5BFeature%5D+">Request Feature</a>
   </p>
 </p>
 
