@@ -16,13 +16,33 @@
   </p>
 </p>
 
-# EKS Resource
+## Table of Contents
+
+- [Table of Contents](#table-of-contents)
+- [About](#about)
+  - [K8s Version](#k8s-version)
+- [Source Configuration](#source-configuration)
+- [Behavior](#behavior)
+  - [check](#check-do-nothing)
+  - [in](#in-do-nothing)
+  - [out](#out-control-the-kubernetes-cluster)
+- [Parameters](#parameters)
+  - [Required](#required)
+  - [Optional](#optional)
+- [Examples](#examples)
+  - [Create a deployment](#create-a-deployment)
+  - [Deploy an instance to EC2](#deploy-an-instance-to-ec2)
+  - [Use Helm to upgrade PostgreSQL](#use-helm-to-upgrade-postgresql)
+- [Previous Authors](#previous-authors)
+- [License](#license)
+
+## About
 
 A Concourse resource for controlling the Kubernetes cluster inside the AWS EKS cluster.
 
 *This resource is designed to be used on AWS EKS alongside Concourse Helm deployment.*
 
-## K8s Versions
+### K8s Version
 
 This resource supports and is compatible with `Kubernetes 1.21`.
 
@@ -63,13 +83,15 @@ Control the Kubernetes cluster with `kubectl`, `aws` or `helm`.
 
 ## Parameters
 
-### Note: you need at least 1 of the following:
+### Required
+
+`Note:` although all are optional, you need at least 1 of the following for the resource to do its job:
 
 - `kubectl`: *Optional.* Specify the operation that you want to perform with kubectl.
 - `aws`: *Optional.* Specify the operation that you want to perform with aws.
 - `helm`: *Optional.* Specify the operation you wish to do with helm.
 
-### Other parameters
+### Optional
 
 - `context`: *Optional.* The context to use when specifying a `kubeconfig` or `kubeconfig_file`
 - `wait_until_ready`: *Optional.* The number of seconds that waits until all pods are ready. 0 means don't wait. Defaults to `30`.
@@ -77,6 +99,8 @@ Control the Kubernetes cluster with `kubectl`, `aws` or `helm`.
 - `wait_until_ready_selector`: *Optional.* [A label selector](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors) to identify a set of pods which to check whether those are ready. Defaults to every pods in the namespace.
 
 ## Examples
+
+### Create a deployment
 
 ```yaml
 resource_types:
@@ -123,7 +147,7 @@ jobs:
       --subnet-id ((aws.subnet-id)) --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=demotest}]'
 ```
 
-### Use helm to update PostgreSQL
+### Use helm to upgrade PostgreSQL
 
 ```yaml
 resources:
