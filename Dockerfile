@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:impish-20211015
 
 LABEL "author"="zoran.jurcevic@sky.uk"
 LABEL "inspired-by"="ksuda@zlab.co.jp"
@@ -24,12 +24,7 @@ RUN set -x && \
     # Download and install helm
     curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
     chmod 700 get_helm.sh && \
-    ./get_helm.sh && \
-    # Download and install aws-iam-authenticator
-    curl -s -L -o /usr/local/bin/aws-iam-authenticator "https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/${AWS_IAM_AUTHENTICATOR_VERSION}/aws-iam-authenticator_$(echo "$AWS_IAM_AUTHENTICATOR_VERSION" | tr -d v)_linux_amd64" && \
-    chmod +x /usr/local/bin/aws-iam-authenticator && \
-    aws-iam-authenticator version && \
-    rm -rf /var/lib/apt/lists/*
+    ./get_helm.sh
 
 RUN mkdir -p /opt/resource
 COPY assets/* /opt/resource/
